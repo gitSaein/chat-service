@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat;
+package com.kafkaSocket.chat.config;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,12 @@ import reactor.core.publisher.Mono;
 public class PostHandler {
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
+		
 		Mono<CreateChatParam> chatCreateMono= request.bodyToMono(CreateChatParam.class);
+		
 		return chatCreateMono.flatMap(chatCreate ->
 				ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(chatCreateMono));
+				.body(chatCreateMono, CreateChatParam.class));
 
 	}
 
