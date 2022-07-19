@@ -1,1 +1,1 @@
-# chat-kafka-socket
+# chat-service
