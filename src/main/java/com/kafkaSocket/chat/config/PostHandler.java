@@ -1,7 +1,6 @@
 package com.kafkaSocket.chat.config;
 
 import org.springframework.http.MediaType;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -16,7 +15,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PostHandler {
 	
-	private final KafkaTemplate<String, MessageParam> kafkaTemplate;
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
 		

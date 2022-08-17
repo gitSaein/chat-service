@@ -20,14 +20,14 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	//implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	//implementation 'org.springframework.kafka:spring-kafka'
-    compile "io.projectreactor.kafka:reactor-kafka:1.1.0.RELEASE"	
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation "io.projectreactor.kafka:reactor-kafka:1.2.2.RELEASE"
+	
 	compileOnly 'org.projectlombok:lombok'
+	
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 tasks.named('test') {
