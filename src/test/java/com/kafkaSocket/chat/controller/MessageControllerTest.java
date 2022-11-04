@@ -13,36 +13,43 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafkaSocket.chat.param.MessageParam;
-import com.kafkaSocket.chat.service.impl.KafkaServiceImpl;
+import com.kafkaSocket.chat.service.KafkaProduceService;
+import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
-@WebFluxTest(KafkaController.class)
+//@WebFluxTest(MessageController.class)
 @Slf4j
-class KafkaControllerTest {
+class MessageControllerTest {
 	
 	@Autowired
 	private WebTestClient webClient;
 	
 	@MockBean
-	private KafkaServiceImpl kafkaService;
+	private KafkaProduceService<MessageParam> messageService;
 
 	@Test
 	void testSendMessage() {
 		
 		//given
 		MessageParam messageParam = MessageParam.builder()
-				.roomKey("100")
+				.roomIdx(100)
 				.content("hi").build();
-		Mono<Boolean> tfMono = Mono.just(true);
+		Mono<String> tfMono = Mono.just("success");
 		
 		
 		//when
-		when(kafkaService.send("test", messageParam.getRoomKey(), messageParam))
-		.thenReturn(tfMono);
+		try {
+			when(messageService.send(messageParam))
+			.thenReturn(tfMono);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		Mono<Boolean> senderResponse = kafkaService.send("test", messageParam.getRoomKey(), messageParam);
 		
 		//then

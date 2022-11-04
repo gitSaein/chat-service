@@ -5,20 +5,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafkaSocket.chat.param.CreateChatParam;
 import com.kafkaSocket.chat.param.MessageParam;
+import com.kafkaSocket.chat.service.KafkaProduceService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class PostHandler {
+public class MessageHandler {
 	
+	private final KafkaProduceService<MessageParam> messageService;
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
 		
-		Mono<CreateChatParam> chatCreateMono= request.bodyToMono(CreateChatParam.class);
+		Mono<CreateChatParam> chatCreateMono = request.bodyToMono(CreateChatParam.class);
 		
 		return chatCreateMono.flatMap(chatCreate ->
 				ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
@@ -30,8 +33,19 @@ public class PostHandler {
 		
 		Mono<MessageParam> messageSendMono = request.bodyToMono(MessageParam.class);
 //		kafkaTemplate.send(null);
-		return messageSendMono.flatMap(message ->
-				ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+//		messageService.send(messageSendMono.);
+		return messageSendMono
+				.flatMap(message -> {
+					try {
+						return messageService.send(message);
+					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				})
+				.flatMap(message ->
+					ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
 				.body(messageSendMono, MessageParam.class));
 	}
 

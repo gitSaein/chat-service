@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
+@Setter
 @Getter
 @ToString
 @Builder
@@ -13,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class MessageParam {
 
-	private String roomKey;
+	private Integer roomIdx;
 	private String content;
 	
 	

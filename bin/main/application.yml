@@ -1,5 +1,12 @@
 server:
   port: 9091
-kafka:
-  host: localhost
-  port: 9092
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+        
+        
