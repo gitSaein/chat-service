@@ -8,6 +8,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface KafkaConsumerService<T> {
-	Mono<String> send(T value) throws JsonProcessingException;
-	Flux<ServerSentEvent<Object>> receive();
+	void consume(T value) throws JsonProcessingException;
+	Flux<ServerSentEvent<T>> receive();
 }

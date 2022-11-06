@@ -2,6 +2,7 @@ package com.kafkaSocket.chat.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,11 @@ import com.kafkaSocket.chat.param.MessageParam;
 import com.kafkaSocket.chat.service.KafkaConsumerService;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class KafkaConsumerServiceImpl implements KafkaConsumerService<MessageParam> {
 	
@@ -23,22 +26,23 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService<MessagePar
     public KafkaConsumerServiceImpl(KafkaTemplate<String, MessageParam> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
-
+    
+    @KafkaListener(groupId="chat_message", topics = "1.room.message")
 	@Override
-	public Mono<String> send(MessageParam mp){
+	public void consume(MessageParam mp){
 		
 		try {
-			kafkaTemplate.send(mp + TOPIC, mp);
+			log.info(mp.toString());
 		} catch (Exception e) {
-			return Mono.error(KafkaException.SEND_ERROR);
+//			return Mono.error(KafkaException.SEND_ERROR);
 
 		}
-		return Mono.just("success");
+//		return Mono.just("success");
 
 	}
 
 	@Override
-	public Flux<ServerSentEvent<Object>> receive() {
+	public Flux<ServerSentEvent<MessageParam>> receive() {
 		// TODO Auto-generated method stub
 		return null;
 	}
