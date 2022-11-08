@@ -4,7 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.kafkaSocket.chat.param.MessageParam;
+import com.kafkaSocket.chat.model.ChatMessage;
 
 import reactor.core.publisher.Mono;
 
@@ -21,8 +21,8 @@ public class MessageClient {
 	public Mono<String> getMessage() {
 		return this.client.get().uri("/kafka/hello").accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToMono(MessageParam.class)
-				.map(MessageParam::getContent);
+				.bodyToMono(ChatMessage.class)
+				.map(ChatMessage::getMessage);
 	}
 
 }

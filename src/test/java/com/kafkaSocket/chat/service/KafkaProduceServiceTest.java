@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.kafkaSocket.chat.param.MessageParam;
+import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
 
 import reactor.core.publisher.Mono;

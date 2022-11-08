@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kafkaSocket.chat.param.MessageParam;
+import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
 
@@ -30,15 +30,15 @@ class MessageControllerTest {
 	private WebTestClient webClient;
 	
 	@MockBean
-	private KafkaProduceService<MessageParam> messageService;
+	private KafkaProduceService<ChatMessage> messageService;
 
 	@Test
 	void testSendMessage() {
 		
 		//given
-		MessageParam messageParam = MessageParam.builder()
+		ChatMessage messageParam = ChatMessage.builder()
 				.roomIdx(100)
-				.content("hi").build();
+				.message("hi").build();
 		Mono<String> tfMono = Mono.just("success");
 		
 		
@@ -56,7 +56,7 @@ class MessageControllerTest {
 		this.webClient.post().uri("/send")
 		.contentType(MediaType.APPLICATION_JSON)
 		.accept(MediaType.APPLICATION_JSON)
-		.body(Mono.just(messageParam), MessageParam.class)
+		.body(Mono.just(messageParam), ChatMessage.class)
 		.exchange()
 		.expectStatus().isOk()
 		.expectBody(Boolean.class)
