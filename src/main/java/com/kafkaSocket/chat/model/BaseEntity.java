@@ -7,6 +7,7 @@ import javax.persistence.Id;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class BaseEntity {
 	@CreatedDate
 	private LocalDateTime createdDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
  
-	
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
 
 }

@@ -17,11 +17,11 @@ public class MessageRouter {
 
 	@Bean
 	public RouterFunction<ServerResponse> routes(MessageHandler postHandler){
-		return route().path("/kafka/v1", builder -> builder
+		return route().path("/chat/v1", builder -> builder
 					.GET("/hello",accept(MediaType.APPLICATION_JSON),
 					        request -> ServerResponse.ok().bodyValue("Hello World"))
-					.POST("/chat/create", postHandler::createFromJson)
-					.POST("/room/messages", postHandler::sendFromJson)
+					.POST("/create", postHandler::createFromJson)
+					.POST("/messages", postHandler::sendFromJson)
 				).build();
 	}
 }

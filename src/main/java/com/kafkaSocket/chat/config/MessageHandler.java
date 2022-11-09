@@ -32,8 +32,6 @@ public class MessageHandler {
 	public Mono<ServerResponse> sendFromJson(ServerRequest request) {
 		
 		Mono<ChatMessage> messageSendMono = request.bodyToMono(ChatMessage.class);
-//		kafkaTemplate.send(null);
-//		messageService.send(messageSendMono.);
 		return messageSendMono
 				.flatMap(message -> {
 					try {
