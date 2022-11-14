@@ -5,7 +5,10 @@
 - spring boot: 2.7.5
 
 ## structure
+
+
 react --- spring boot --- kafka/ zookeeper
+
               |
               |
            mongoDB
