@@ -19,7 +19,8 @@ import reactor.core.publisher.Mono;
 public class KafkaConsumerServiceImpl implements KafkaConsumerService<ChatMessage> {
 
 	private final ChatMessageRepository chatMessageRepository;
-    
+//    private final SocketHandler socketHandler;
+   
     @KafkaListener(groupId="chat_message", topics = "1.room.message")
 	@Override
 	public void consume(ChatMessage cm){
@@ -27,9 +28,9 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService<ChatMessag
 		try {
 			log.info(cm.toString());
 			Mono<ChatMessage> chatMessage = chatMessageRepository.save(cm);
-			
 			chatMessage.subscribe(e -> {
 				log.info(e.toString());
+//				socketHandler.sendMessageToAll(e.toString());
 
 			});
 		} catch (Exception e) {
