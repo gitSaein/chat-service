@@ -1,5 +1,6 @@
 package com.kafkaSocket.chat.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,15 +14,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class KafkaProduceServiceImpl implements KafkaProduceService<ChatMessage> {
 	
 	private final static String TOPIC = ".room.message";	
     private final KafkaTemplate<String, ChatMessage> kafkaTemplate;
 
-    @Autowired
-    public KafkaProduceServiceImpl(KafkaTemplate<String, ChatMessage> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
 
 	@Override
 	public Mono<String> send(ChatMessage mp){

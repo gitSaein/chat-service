@@ -47,4 +47,7 @@ public class MessageHandler {
 				.body(messageSendMono, ChatMessage.class));
 	}
 
+	//https://stackoverflow.com/questions/70684474/persisting-kafka-message-for-sse-client-once-they-disconnect
+//	public Flux<>
+
 }

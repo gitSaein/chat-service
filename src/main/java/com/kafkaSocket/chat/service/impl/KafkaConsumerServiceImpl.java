@@ -12,40 +12,40 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.util.LinkedList;
+
+import java.util.*;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumerServiceImpl implements KafkaConsumerService<ChatMessage> {
 
+	private final SinkService sinkService;
 	private final ChatMessageRepository chatMessageRepository;
 //    private final SocketHandler socketHandler;
+
+	List<ChatMessage> chatMessageList = new LinkedList<>();
    
     @KafkaListener(groupId="chat_message", topics = "1.room.message")
 	@Override
 	public void consume(ChatMessage cm){
-		
-		try {
-			log.info(cm.toString());
-			Mono<ChatMessage> chatMessage = chatMessageRepository.save(cm);
-			chatMessage.subscribe(e -> {
-				log.info(e.toString());
-//				socketHandler.sendMessageToAll(e.toString());
 
-			});
-		} catch (Exception e) {
-			log.error("[ERROR]", e);
-//			return Mono.error(KafkaException.SEND_ERROR);
+//			Mono<ChatMessage> chatMessage = chatMessageRepository.save(cm);
+		Mono.just(cm)
+				.doOnNext(e -> {
+					chatMessageList.add(0, e);
+					log.info(e.toString());
+					Sinks.EmitResult result = sinkService.getSink().tryEmitNext(cm);
+				})
+				.doOnError(e -> log.error("kafka consumer: ", e))
+				.subscribe();
 
-		}
-//		return Mono.just("success");
 
 	}
 
-	@Override
-	public Flux<ServerSentEvent<ChatMessage>> receive() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

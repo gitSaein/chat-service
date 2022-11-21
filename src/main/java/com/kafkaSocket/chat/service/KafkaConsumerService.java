@@ -9,5 +9,4 @@ import reactor.core.publisher.Mono;
 
 public interface KafkaConsumerService<T> {
 	void consume(T value) throws JsonProcessingException;
-	Flux<ServerSentEvent<T>> receive();
 }
