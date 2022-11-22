@@ -26,7 +26,7 @@ public class MessageRouter {
 					        request -> ServerResponse.ok().bodyValue("Hello World"))
 					.POST("/chat/create", postHandler::createFromJson)
 					.POST("/room/messages", postHandler::sendFromJson)
-//						.GET("/get",  kafkaConsumerService::consume)
+					.GET("/sse", postHandler::subscribe)
 				).build();
 	}
 }

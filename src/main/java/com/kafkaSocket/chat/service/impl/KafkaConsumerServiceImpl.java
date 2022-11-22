@@ -39,7 +39,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService<ChatMessag
 				.doOnNext(e -> {
 					chatMessageList.add(0, e);
 					log.info(e.toString());
-					Sinks.EmitResult result = sinkService.getSink().tryEmitNext(cm);
+					sinkService.getSink().tryEmitNext(cm);
 				})
 				.doOnError(e -> log.error("kafka consumer: ", e))
 				.subscribe();
