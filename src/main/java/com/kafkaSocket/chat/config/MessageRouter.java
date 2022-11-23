@@ -17,8 +17,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @RequiredArgsConstructor
 public class MessageRouter {
 
-	private final KafkaConsumerServiceImpl kafkaConsumerService;
-
 	@Bean
 	public RouterFunction<ServerResponse> routes(MessageHandler postHandler){
 		return route().path("/kafka/v1", builder -> builder

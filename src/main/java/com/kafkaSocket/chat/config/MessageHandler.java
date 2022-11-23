@@ -13,6 +13,7 @@ import com.kafkaSocket.chat.param.CreateChatParam;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -53,8 +54,7 @@ public class MessageHandler {
 
 	public Mono<ServerResponse> subscribe(ServerRequest serverRequest){
 		return ServerResponse.ok()
-				.contentType(MediaType.TEXT_EVENT_STREAM)
-				.body(sinkService.getSink().asFlux(), ChatMessage.class);
+				.body(sinkService.getSink().asFlux().log(), ChatMessage.class);
 	}
 
 	//https://stackoverflow.com/questions/70684474/persisting-kafka-message-for-sse-client-once-they-disconnect
