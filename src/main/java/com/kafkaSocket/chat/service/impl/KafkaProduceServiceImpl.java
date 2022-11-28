@@ -30,7 +30,7 @@ public class KafkaProduceServiceImpl implements KafkaProduceService<ChatMessage>
 			return Mono.error(KafkaException.SEND_ERROR);
 
 		}
-		return Mono.just("success");
+		return Mono.just(mp.toString());
 
 	}
 

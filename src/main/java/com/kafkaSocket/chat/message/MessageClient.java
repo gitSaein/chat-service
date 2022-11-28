@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat.config;
+package com.kafkaSocket.chat.message;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

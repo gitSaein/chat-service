@@ -1,10 +1,9 @@
-package com.kafkaSocket.chat.config;
+package com.kafkaSocket.chat.message;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 
-import com.kafkaSocket.chat.service.impl.KafkaConsumerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,7 @@ public class MessageRouter {
 					        request -> ServerResponse.ok().bodyValue("Hello World"))
 					.POST("/chat/create", postHandler::createFromJson)
 					.POST("/room/messages", postHandler::sendFromJson)
-					.GET("/sse", postHandler::subscribe)
+					.GET("/subscribe", postHandler::subscribe)
 				).build();
 	}
 }
