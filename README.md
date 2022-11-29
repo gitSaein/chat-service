@@ -1,7 +1,7 @@
 # Spring boot + Kafka + WebFlux
 
 ## version
-- java: 17
+- java: 11
 - spring boot: 2.7.5
 
 ## structure
