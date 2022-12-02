@@ -23,7 +23,7 @@ public class MessageRouter {
 					        request -> ServerResponse.ok().bodyValue("Hello World"))
 					.POST("/chat/create", postHandler::createFromJson)
 					.POST("/room/messages", postHandler::sendFromJson)
-					.GET("/subscribe", postHandler::subscribe)
+					.GET("/room/{roomIdx}", request -> postHandler.consumeChatMessage(request))
 				).build();
 	}
 }

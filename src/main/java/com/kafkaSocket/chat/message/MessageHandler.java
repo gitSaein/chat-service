@@ -1,5 +1,6 @@
 package com.kafkaSocket.chat.message;
 
+import com.kafkaSocket.chat.service.impl.KafkaConsumerServiceImpl;
 import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
 import com.kafkaSocket.chat.service.impl.SinkServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.param.CreateChatParam;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -21,6 +23,7 @@ public class MessageHandler {
 	
 	private final KafkaProduceServiceImpl messageService;
 	private final SinkServiceImpl sinkService;
+	private final KafkaConsumerServiceImpl kafkaConsumerService;
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
 		
@@ -43,10 +46,17 @@ public class MessageHandler {
 	}
 
 	public Mono<ServerResponse> subscribe(ServerRequest serverRequest){
+		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("roomIdx"));
 		return ServerResponse.ok()
 				.contentType(MediaType.TEXT_EVENT_STREAM)
 				.body(sinkService.asFlux(), ChatMessage.class).log();
 	}
 
+	public Mono<ServerResponse> consumeChatMessage(ServerRequest serverRequest){
+		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("roomIdx"));
+		return ServerResponse.ok()
+				.contentType(MediaType.TEXT_EVENT_STREAM)
+				.body(kafkaConsumerService.subscribe(roomIdx), ChatMessage.class).log();
 
+	}
 }

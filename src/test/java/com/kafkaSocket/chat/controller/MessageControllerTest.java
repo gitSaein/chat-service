@@ -18,12 +18,10 @@ import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
 
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 //@WebFluxTest(MessageController.class)
-@Slf4j
 class MessageControllerTest {
 	
 	@Autowired
