@@ -62,7 +62,6 @@ class MessageControllerTest {
 	        // custom assertions (e.g. AssertJ)...
 			Boolean map = result.getResponseBody();
 
-			log.info("hi: {}", result);
 	        });
 	}
 
