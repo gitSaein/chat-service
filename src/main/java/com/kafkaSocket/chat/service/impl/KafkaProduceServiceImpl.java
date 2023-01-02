@@ -60,7 +60,7 @@ public class KafkaProduceServiceImpl implements KafkaProduceService<ChatMessage>
 		.send(Mono.just(SenderRecord.create(new ProducerRecord<>(mp.getRoomIdx() + TOPIC,mp),1)))
 				.then()
 				.doOnError(e -> log.error("Error: {}", e))
-				.doOnSubscribe(e -> log.info("Success: {}", e))
+				.doOnSuccess(e -> log.info("Success: {}", e))
 				.subscribe();
 		return Mono.empty();
 		
