@@ -44,15 +44,6 @@ public class ChatMessageProduceServiceImpl implements KafkaProduceService<ChatMe
 	private final static String TOPIC = "message.room.";	
 	private final KafkaTemplate<String, ChatMessage> kafkaTemplate;
     
-    private Map<String, Object> initKafkaSettings(){
-		Map<String, Object> produeceProps = new HashMap<>();
-		produeceProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		produeceProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		produeceProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-		return produeceProps;
-	}
-
 //https://projectreactor.io/docs/kafka/release/reference/
 	@Override
 	public Mono<String> send(ChatMessage cm){
