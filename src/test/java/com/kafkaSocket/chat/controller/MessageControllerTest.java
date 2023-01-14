@@ -16,14 +16,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.service.KafkaProduceService;
-import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
+import com.kafkaSocket.chat.service.impl.ChatMessageProduceServiceImpl;
 
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 //@WebFluxTest(MessageController.class)
-@Slf4j
 class MessageControllerTest {
 	
 	@Autowired
@@ -64,7 +62,6 @@ class MessageControllerTest {
 	        // custom assertions (e.g. AssertJ)...
 			Boolean map = result.getResponseBody();
 
-			log.info("hi: {}", result);
 	        });
 	}
 
