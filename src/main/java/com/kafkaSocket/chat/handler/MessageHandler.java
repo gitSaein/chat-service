@@ -1,7 +1,7 @@
-package com.kafkaSocket.chat.message;
+package com.kafkaSocket.chat.handler;
 
-import com.kafkaSocket.chat.service.impl.KafkaConsumerServiceImpl;
-import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
+import com.kafkaSocket.chat.service.impl.ChatMessageConsumerServiceImpl;
+import com.kafkaSocket.chat.service.impl.ChatMessageProduceServiceImpl;
 import com.kafkaSocket.chat.service.impl.SinkServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -21,9 +21,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MessageHandler {
 	
-	private final KafkaProduceServiceImpl messageService;
-	private final SinkServiceImpl sinkService;
-	private final KafkaConsumerServiceImpl kafkaConsumerService;
+	private final ChatMessageProduceServiceImpl messageService;
+	private final ChatMessageConsumerServiceImpl kafkaConsumerService;
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
 		
@@ -35,7 +34,7 @@ public class MessageHandler {
 
 	}
 	
-	public Mono<ServerResponse> sendFromJson(ServerRequest request) {
+	public Mono<ServerResponse> sendChatMessage(ServerRequest request) {
 		
 		Mono<ChatMessage> messageSendMono = request.bodyToMono(ChatMessage.class);
 		return messageSendMono
@@ -45,18 +44,10 @@ public class MessageHandler {
 				.body(messageSendMono, ChatMessage.class));
 	}
 
-	public Mono<ServerResponse> subscribe(ServerRequest serverRequest){
-		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("roomIdx"));
-		return ServerResponse.ok()
-				.contentType(MediaType.TEXT_EVENT_STREAM)
-				.body(sinkService.asFlux(), ChatMessage.class).log();
-	}
-
-	public Mono<ServerResponse> consumeChatMessage(ServerRequest serverRequest){
-		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("roomIdx"));
-		return ServerResponse.ok()
-				.contentType(MediaType.TEXT_EVENT_STREAM)
-				.body(kafkaConsumerService.subscribe(roomIdx), ChatMessage.class).log();
+	
+	public Mono<ServerResponse> getChatMessage(ServerRequest serverRequest){
+		return kafkaConsumerService.getChatMessageByTopic(serverRequest);
 
 	}
+	
 }

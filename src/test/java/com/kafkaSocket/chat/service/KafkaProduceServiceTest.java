@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.kafkaSocket.chat.model.ChatMessage;
-import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
+import com.kafkaSocket.chat.service.impl.ChatMessageProduceServiceImpl;
 
 import reactor.core.publisher.Mono;
 
@@ -21,7 +21,7 @@ public class KafkaProduceServiceTest {
 	
 	
 	@MockBean
-	KafkaProduceServiceImpl kafkaServiceImpl;
+	ChatMessageProduceServiceImpl kafkaServiceImpl;
 
 	@Test
 	public void testSend() {

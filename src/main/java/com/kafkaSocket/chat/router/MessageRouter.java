@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat.message;
+package com.kafkaSocket.chat.router;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.kafkaSocket.chat.handler.MessageHandler;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,8 +24,8 @@ public class MessageRouter {
 					.GET("/hello",accept(MediaType.APPLICATION_JSON),
 					        request -> ServerResponse.ok().bodyValue("Hello World"))
 					.POST("/chat/create", postHandler::createFromJson)
-					.POST("/room/messages", postHandler::sendFromJson)
-					.GET("/room/{roomIdx}", request -> postHandler.consumeChatMessage(request))
+					.POST("/room/messages", postHandler::sendChatMessage)
+					.GET("/message/room/{roomIdx}", postHandler::getChatMessage)					
 				).build();
 	}
 }

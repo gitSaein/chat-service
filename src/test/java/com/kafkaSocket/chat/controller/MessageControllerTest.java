@@ -16,7 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.service.KafkaProduceService;
-import com.kafkaSocket.chat.service.impl.KafkaProduceServiceImpl;
+import com.kafkaSocket.chat.service.impl.ChatMessageProduceServiceImpl;
 
 import reactor.core.publisher.Mono;
 
