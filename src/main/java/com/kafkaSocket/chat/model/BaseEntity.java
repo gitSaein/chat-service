@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,10 +17,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@MappedSuperclass
 public class BaseEntity {
 
 	@Id
-	private ObjectId id;
+	private String id;
 	
 	@CreatedDate
 	private LocalDateTime createdDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));

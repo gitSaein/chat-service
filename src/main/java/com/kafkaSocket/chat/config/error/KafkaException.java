@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat.model;
+package com.kafkaSocket.chat.config.error;
 
 public class KafkaException extends RuntimeException {
 

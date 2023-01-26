@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat.config;
+package com.kafkaSocket.chat.message;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -6,9 +6,9 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kafkaSocket.chat.model.ChatMessage;
 import com.kafkaSocket.chat.param.CreateChatParam;
 import com.kafkaSocket.chat.service.KafkaProduceService;
+import com.kafkaSocket.chat.service.impl.ChatServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MessageHandler {
 	
-	private final KafkaProduceService<ChatMessage> messageService;
+	private final ChatServiceImpl chatServiceImpl;
 
 	public Mono<ServerResponse> createFromJson(ServerRequest request){
 		
@@ -29,22 +29,20 @@ public class MessageHandler {
 
 	}
 	
-	public Mono<ServerResponse> sendFromJson(ServerRequest request) {
-		
-		Mono<ChatMessage> messageSendMono = request.bodyToMono(ChatMessage.class);
+	public Mono<ServerResponse> createMessage(ServerRequest request) {
+		Mono<ChatMessageDTO.RequestMessage> messageSendMono = request.bodyToMono(ChatMessageDTO.RequestMessage.class);
 		return messageSendMono
 				.flatMap(message -> {
-					try {
-						return messageService.send(message);
-					} catch (JsonProcessingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					return null;
+					return chatServiceImpl.send(message);
 				})
 				.flatMap(message ->
 					ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-				.body(messageSendMono, ChatMessage.class));
+				.body(messageSendMono, ChatMessageEntity.class));
+	}
+	
+	public Mono<ServerResponse> getChatMessage(ServerRequest serverRequest){
+		return chatServiceImpl.getChatMessageByTopic(serverRequest);
+
 	}
 
 }

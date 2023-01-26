@@ -1,27 +1,24 @@
-package com.kafkaSocket.chat.model;
+package com.kafkaSocket.chat.message;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.kafkaSocket.chat.enums.MessageType;
+import com.kafkaSocket.chat.model.BaseEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
-@Document(value = "chatMessages")
-@Setter
 @Getter
 @ToString
+@Document(collection = "chatMessages")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessage extends BaseEntity {
+public class ChatMessageEntity extends BaseEntity {
 
-	public enum MessageType {
-		CHAT_CREATE, CHAT_IN, CHAT_OUT, CHAT_MESSAGE
-	}
-	
 	private Integer roomIdx;
 	private Integer userIdx;
 	private String message;
