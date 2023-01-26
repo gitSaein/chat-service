@@ -4,8 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.kafkaSocket.chat.model.KafkaException;
-
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
