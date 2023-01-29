@@ -22,13 +22,15 @@ public class MessageHandler {
 		
 		Mono<ChatMessageDTO.RequestCreateRoom> chatCreateMono = request.bodyToMono(ChatMessageDTO.RequestCreateRoom.class);
 		
-		return chatCreateMono.flatMap(chatCreate ->
-				ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-				.body(chatCreateMono, ChatMessageDTO.RequestCreateRoom.class));
+		return chatCreateMono
+				.flatMap(chatCreate -> {
+					return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+							.body(chatServiceImpl.createRoom(chatCreate),ChatMessageDTO.RequestCreateRoom.class);
+				});
 
 	}
 	
-	public Mono<ServerResponse> create(ServerRequest request) {
+	public Mono<ServerResponse> creatMessage(ServerRequest request) {
 		Mono<ChatMessageDTO.RequestMessage> messageSendMono = request.bodyToMono(ChatMessageDTO.RequestMessage.class);
 		return messageSendMono
 				.flatMap(message -> {
@@ -39,7 +41,7 @@ public class MessageHandler {
 				.body(messageSendMono, ChatMessageEntity.class));
 	}
 	
-	public Mono<ServerResponse> get(ServerRequest serverRequest){
+	public Mono<ServerResponse> getMessage(ServerRequest serverRequest){
 		return chatServiceImpl.getChatMessageByTopic(serverRequest);
 
 	}

@@ -1,6 +1,5 @@
 package com.kafkaSocket.chat.router;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 import org.springdoc.core.annotations.RouterOperation;
@@ -38,26 +37,14 @@ public class MessageRouter {
 					path = "/chat/v1/message", 
 					method = RequestMethod.POST,
 					beanClass = MessageHandler.class, 
-					beanMethod = "create",
+					beanMethod = "creatMessage",
 					operation = @Operation(
 							summary = "채팅방에 메시지 송신 ",
-							operationId = "create",
+							operationId = "creatMessage",
 							requestBody = @RequestBody(
 									content = @Content(
 											schema = @Schema(
 													implementation = ChatMessageDTO.RequestMessage.class))))),
-			@RouterOperation(
-					path = "/chat/v1/message/room/{roomIdx}", 
-					method = RequestMethod.GET, 
-					produces = MediaType.TEXT_EVENT_STREAM_VALUE,
-					beanClass = MessageHandler.class, 
-					beanMethod = "get",
-					operation = @Operation(
-							summary = "채팅방 메시지 수신 ",
-							operationId = "get",
-							parameters = {
-									@Parameter(in = ParameterIn.PATH, name="roomIdx", description="")
-							})),
 			@RouterOperation(
 					path = "/chat/v1/room", 
 					method = RequestMethod.POST, 
@@ -70,13 +57,25 @@ public class MessageRouter {
 									content = @Content(
 											schema = @Schema(
 													implementation = ChatMessageDTO.RequestCreateRoom.class))))),
+			@RouterOperation(
+					path = "/chat/v1/message/room/{roomIdx}", 
+					method = RequestMethod.GET, 
+					produces = MediaType.TEXT_EVENT_STREAM_VALUE,
+					beanClass = MessageHandler.class, 
+					beanMethod = "getMessage",
+					operation = @Operation(
+							summary = "채팅방 메시지 수신 ",
+							operationId = "getMessage",
+							parameters = {
+									@Parameter(in = ParameterIn.PATH, name="roomIdx", description="")
+							})),
 	})	
 	@Bean
 	public RouterFunction<ServerResponse> routes(MessageHandler postHandler){
 		return route().path("/chat/v1", builder -> builder
 					.POST("/room", postHandler::createRoom)
-					.POST("/message", postHandler::create)
-					.GET("/message/room/{roomIdx}", postHandler::get)					
+					.POST("/message", postHandler::creatMessage)
+					.GET("/message/room/{roomIdx}", postHandler::getMessage)					
 				).build();
 	}
 }

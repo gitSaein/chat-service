@@ -78,9 +78,9 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
   	}
   	
   	@Transactional
-  	public void createRoom(ChatMessageDTO.RequestCreateRoom dto) {
+  	public Mono<String> createRoom(ChatMessageDTO.RequestCreateRoom dto) {
   		chatRoomsRepository.save(dto.toChatRoomEntity());
-  		this.send(dto.toChatMessageEntity());
+  		return this.send(dto.toChatMessageEntity());
   	}
 
 }
