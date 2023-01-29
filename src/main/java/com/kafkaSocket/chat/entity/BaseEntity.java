@@ -1,4 +1,4 @@
-package com.kafkaSocket.chat.model;
+package com.kafkaSocket.chat.entity;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 

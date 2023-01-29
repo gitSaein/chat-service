@@ -1,9 +1,8 @@
-package com.kafkaSocket.chat.message;
+package com.kafkaSocket.chat.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.kafkaSocket.chat.enums.MessageType;
-import com.kafkaSocket.chat.model.BaseEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +18,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class ChatMessageEntity extends BaseEntity {
 
-	private Integer roomIdx;
-	private Integer userIdx;
+	private Long roomIdx;
+	private Long userIdx;
 	private String message;
 	private MessageType messageType;
 	

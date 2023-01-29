@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kafkaSocket.chat.message.ChatMessageEntity;
+import com.kafkaSocket.chat.entity.ChatMessageEntity;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ class MessageControllerTest {
 		
 		//given
 		ChatMessageEntity messageParam = ChatMessageEntity.builder()
-				.roomIdx(100)
+				.roomIdx(100L)
 				.message("hi").build();
 		Mono<String> tfMono = Mono.just("success");
 		

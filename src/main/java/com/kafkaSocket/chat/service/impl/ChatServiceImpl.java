@@ -5,14 +5,16 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import com.kafkaSocket.chat.message.ChatMessageDTO;
-import com.kafkaSocket.chat.message.ChatMessageEntity;
+import com.kafkaSocket.chat.dto.ChatMessageDTO;
+import com.kafkaSocket.chat.entity.ChatMessageEntity;
 import com.kafkaSocket.chat.repository.ChatMessageRepository;
+import com.kafkaSocket.chat.repository.ChatRoomsRepository;
 import com.kafkaSocket.chat.service.KafkaConsumerService;
 import com.kafkaSocket.chat.service.KafkaProduceService;
 
@@ -23,19 +25,18 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChatServiceImpl implements KafkaConsumerService<ChatMessageDTO.RequestMessage>, KafkaProduceService<ChatMessageDTO.RequestMessage>{
+public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>, KafkaProduceService<ChatMessageEntity>{
 
 	private final SinkServiceImpl sinkService;
 	private final ChatMessageRepository chatMessageRepository;
+	private final ChatRoomsRepository chatRoomsRepository;
 	private final static String TOPIC = "message.room.";	
-	private final KafkaTemplate<String, ChatMessageDTO.RequestMessage> kafkaTemplate;
+	private final KafkaTemplate<String, ChatMessageEntity> kafkaTemplate;
     
    
     @Override
     @KafkaListener(groupId="chat_message", topicPattern = "message.room.*")
-	public void consume(ChatMessageDTO.RequestMessage chatMessage){
-		log.info(chatMessage.toString());
-
+	public void consume(ChatMessageEntity chatMessage){
 		sinkService.getSink(chatMessage.getRoomIdx().toString()).tryEmitNext(chatMessage);
 	}
     
@@ -50,17 +51,17 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageDTO.Requ
     
   //https://projectreactor.io/docs/kafka/release/reference/
   	@Override
-  	public Mono<String> send(ChatMessageDTO.RequestMessage requestMessage){
+  	public Mono<String> send(ChatMessageEntity chatMessageEntity){
   	
-  		ListenableFuture<SendResult<String, ChatMessageDTO.RequestMessage>> kafkaResponse = 
-  				kafkaTemplate.send(TOPIC + requestMessage.getRoomIdx(), requestMessage);
-  		kafkaResponse.addCallback(new ListenableFutureCallback<SendResult<String, ChatMessageDTO.RequestMessage>>() {
+  		ListenableFuture<SendResult<String, ChatMessageEntity>> kafkaResponse = 
+  				kafkaTemplate.send(TOPIC + chatMessageEntity.getRoomIdx(), chatMessageEntity);
+  		kafkaResponse.addCallback(new ListenableFutureCallback<SendResult<String, ChatMessageEntity>>() {
 
   			@Override
-  			public void onSuccess(SendResult<String, ChatMessageDTO.RequestMessage > result) {
+  			public void onSuccess(SendResult<String, ChatMessageEntity> result) {
   				// TODO Auto-generated method stub
   				log.info("success: {}", result);
-  				ChatMessageEntity entity = requestMessage.toEntity();
+  				ChatMessageEntity entity = chatMessageEntity;
   				Mono<ChatMessageEntity> entityr = chatMessageRepository.save(entity);
   				entityr.subscribe(System.out::println);
   			}
@@ -73,10 +74,13 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageDTO.Requ
   			}
   		});
           	
-  		return Mono.just(requestMessage.toString());
-
-  				
-
+  		return Mono.just(chatMessageEntity.toString());	
+  	}
+  	
+  	@Transactional
+  	public void createRoom(ChatMessageDTO.RequestCreateRoom dto) {
+  		chatRoomsRepository.save(dto.toChatRoomEntity());
+  		this.send(dto.toChatMessageEntity());
   	}
 
 }
