@@ -66,8 +66,9 @@ public class ChatMessageDTO {
 			return ChatRoomsEntity.builder()
 					.roomIdx(roomIdx)
 					.name(name)
-					.managerIdx(managerIdx)
-					.participants(participants).build();
+					.editedName(name)
+					.participants(participants)
+					.managerIdx(managerIdx).build();
 		}
 
 	}

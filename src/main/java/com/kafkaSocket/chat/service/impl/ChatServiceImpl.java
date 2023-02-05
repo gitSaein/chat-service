@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.kafkaSocket.chat.dto.ChatMessageDTO;
 import com.kafkaSocket.chat.entity.ChatMessageEntity;
+import com.kafkaSocket.chat.entity.ChatRoomsEntity;
 import com.kafkaSocket.chat.repository.ChatMessageRepository;
 import com.kafkaSocket.chat.repository.ChatRoomsRepository;
 import com.kafkaSocket.chat.service.KafkaConsumerService;
@@ -79,7 +80,8 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
   	
   	@Transactional
   	public Mono<String> createRoom(ChatMessageDTO.RequestCreateRoom dto) {
-  		chatRoomsRepository.save(dto.toChatRoomEntity());
+  		Mono<ChatRoomsEntity> entityr = chatRoomsRepository.save(dto.toChatRoomEntity()).log();
+  		entityr.subscribe(System.out::println);
   		return this.send(dto.toChatMessageEntity());
   	}
 

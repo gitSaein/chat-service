@@ -7,12 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "chatRooms")
 public class ChatRoomsEntity extends BaseEntity{
 
