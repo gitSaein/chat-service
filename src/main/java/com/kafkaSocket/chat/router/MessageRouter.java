@@ -57,6 +57,19 @@ public class MessageRouter {
 									content = @Content(
 											schema = @Schema(
 													implementation = ChatMessageDTO.RequestCreateRoom.class))))),
+			
+			@RouterOperation(
+					path = "/chat/v1/room/leave", 
+					method = RequestMethod.PUT, 
+					beanClass = MessageHandler.class, 
+					beanMethod = "leaveRoom",
+					operation = @Operation(
+							summary = "채팅방 나가",
+							operationId = "leaveRoom",
+							requestBody = @RequestBody(
+									content = @Content(
+											schema = @Schema(
+													implementation = ChatMessageDTO.RequestLeaveRoom.class))))),
 			@RouterOperation(
 					path = "/chat/v1/message/room/{roomIdx}", 
 					method = RequestMethod.GET, 
@@ -74,6 +87,7 @@ public class MessageRouter {
 	public RouterFunction<ServerResponse> routes(MessageHandler postHandler){
 		return route().path("/chat/v1", builder -> builder
 					.POST("/room", postHandler::createRoom)
+					.PUT("/room/leave", postHandler::leaveRoom)
 					.POST("/message", postHandler::creatMessage)
 					.GET("/message/room/{roomIdx}", postHandler::getMessage)					
 				).build();

@@ -5,7 +5,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -28,15 +27,15 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>, KafkaProduceService<ChatMessageEntity>{
 
-	private final SinkServiceImpl sinkService;
+	private final SinkServiceImpl<ChatMessageEntity> sinkService;
 	private final ChatMessageRepository chatMessageRepository;
 	private final ChatRoomsRepository chatRoomsRepository;
-	private final static String TOPIC = "message.room.";	
+	private final static String ROOM_TOPIC = "room.";	
 	private final KafkaTemplate<String, ChatMessageEntity> kafkaTemplate;
     
    
     @Override
-    @KafkaListener(groupId="chat_message", topicPattern = "message.room.*")
+    @KafkaListener(groupId="room_message", topicPattern = ROOM_TOPIC + "*")
 	public void consume(ChatMessageEntity chatMessage){
 		sinkService.getSink(chatMessage.getRoomIdx().toString()).tryEmitNext(chatMessage);
 	}
@@ -48,19 +47,15 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
 				.body(sinkService.asFlux(roomIdx.toString()), ChatMessageDTO.RequestMessage.class).log();
 	}
 
-
-    
-  //https://projectreactor.io/docs/kafka/release/reference/
   	@Override
   	public Mono<String> send(ChatMessageEntity chatMessageEntity){
   	
   		ListenableFuture<SendResult<String, ChatMessageEntity>> kafkaResponse = 
-  				kafkaTemplate.send(TOPIC + chatMessageEntity.getRoomIdx(), chatMessageEntity);
+  				kafkaTemplate.send(ROOM_TOPIC + chatMessageEntity.getRoomIdx(), chatMessageEntity);
   		kafkaResponse.addCallback(new ListenableFutureCallback<SendResult<String, ChatMessageEntity>>() {
 
   			@Override
   			public void onSuccess(SendResult<String, ChatMessageEntity> result) {
-  				// TODO Auto-generated method stub
   				log.info("success: {}", result);
   				ChatMessageEntity entity = chatMessageEntity;
   				Mono<ChatMessageEntity> entityr = chatMessageRepository.save(entity);
@@ -69,7 +64,6 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
 
   			@Override
   			public void onFailure(Throwable ex) {
-  				// TODO Auto-generated method stub
   				log.info("fail");
 
   			}
@@ -78,11 +72,48 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
   		return Mono.just(chatMessageEntity.toString());	
   	}
   	
-  	@Transactional
-  	public Mono<String> createRoom(ChatMessageDTO.RequestCreateRoom dto) {
-  		Mono<ChatRoomsEntity> entityr = chatRoomsRepository.save(dto.toChatRoomEntity()).log();
-  		entityr.subscribe(System.out::println);
-  		return this.send(dto.toChatMessageEntity());
+  	public Mono<ChatRoomsEntity> createRoom(ChatMessageDTO.RequestCreateRoom dto) {
+  		return chatRoomsRepository.save(dto.toChatRoomEntity())
+  				.doOnSuccess(chatRoom -> {
+  					this.send(dto.toChatMessageEntity());
+  				});
   	}
-
+  	
+  	public Mono<ChatRoomsEntity> leaveRoom(ChatMessageDTO.RequestLeaveRoom dto) {
+  		return chatRoomsRepository.findById(dto.getRoomId())
+  				.flatMap(chatRoom -> {
+  					int idx = chatRoom.getParticipants().indexOf(dto.getUserIdx());
+  					if(idx > -1 ) {
+  						chatRoom.getParticipants().remove(idx);
+  					}
+  					if(chatRoom.getParticipants().size() == 0) {
+  						return Mono.just(chatRoom);
+  					}
+  					if(chatRoom.getManagerIdx() == dto.getUserIdx()) {
+  						chatRoom.changedManager(chatRoom.getParticipants().get(0));
+  					}
+  					return Mono.just(chatRoom);
+  				})
+  				.flatMap(this.chatRoomsRepository::save)
+  				.doOnSuccess(chatRoom -> {
+  					this.send(dto.toChatMessageEntity(chatRoom.getRoomIdx()));
+  				});
+  		
+  	}
+  	
+  	public Mono<ChatRoomsEntity> participatedInRoom(ChatMessageDTO.RequestParticipatedInRoom dto) {
+  		return chatRoomsRepository.findById(dto.getRoomId())
+  				.map(v -> {
+					int idx = v.getParticipants().indexOf(dto.getUserIdx());
+					if( idx == -1) {
+						v.getParticipants().add(dto.getUserIdx());
+					}
+  					return v;
+  				})
+  				.doOnNext(this.chatRoomsRepository::save)
+  				.doOnSuccess(chatRoom -> {
+  					this.send(dto.toChatMessageEntity(chatRoom.getRoomIdx()));  					
+  				});
+  	}
+  	
 }

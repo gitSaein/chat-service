@@ -30,6 +30,14 @@ public class MessageHandler {
 
 	}
 	
+	public Mono<ServerResponse> leaveRoom(ServerRequest request) {
+		return request.bodyToMono(ChatMessageDTO.RequestLeaveRoom.class)
+				.flatMap(chat -> {
+					return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+							.body(chatServiceImpl.leaveRoom(chat), ChatMessageDTO.RequestLeaveRoom.class);
+				});
+	}
+	
 	public Mono<ServerResponse> creatMessage(ServerRequest request) {
 		Mono<ChatMessageDTO.RequestMessage> messageSendMono = request.bodyToMono(ChatMessageDTO.RequestMessage.class);
 		return messageSendMono
