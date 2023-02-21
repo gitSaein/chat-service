@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.kafkaSocket.chat.dto.ChatMessageDTO;
 import com.kafkaSocket.chat.entity.ChatMessageEntity;
+import com.kafkaSocket.chat.service.impl.AccountServiceImpl;
 import com.kafkaSocket.chat.service.impl.ChatServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class MessageHandler {
 	
 	private final ChatServiceImpl chatServiceImpl;
+	private final AccountServiceImpl accountServiceImpl;
 
 	public Mono<ServerResponse> createRoom(ServerRequest request){
 		
@@ -30,12 +32,34 @@ public class MessageHandler {
 
 	}
 	
-	public Mono<ServerResponse> leaveRoom(ServerRequest request) {
-		return request.bodyToMono(ChatMessageDTO.RequestLeaveRoom.class)
-				.flatMap(chat -> {
-					return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-							.body(chatServiceImpl.leaveRoom(chat), ChatMessageDTO.RequestLeaveRoom.class);
-				});
+	public Mono<ServerResponse> updateRoom(ServerRequest request) {
+		String messageType = request.pathVariable("messageType");
+		switch(messageType) {
+		case "out":
+			return request.bodyToMono(ChatMessageDTO.RequestLeaveRoom.class)
+					.flatMap(param -> {
+						return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+								.body(chatServiceImpl.leaveRoom(param), ChatMessageDTO.RequestLeaveRoom.class);
+					});
+		case "in":
+			return request.bodyToMono(ChatMessageDTO.RequestParticipatedInRoom.class)
+					.flatMap(param -> {
+						return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+								.body(chatServiceImpl.participatedInRoom(param), ChatMessageDTO.RequestLeaveRoom.class);
+					});
+			
+		case "invite":
+			return request.bodyToMono(ChatMessageDTO.RequestInviteRoom.class)
+					.flatMap(param -> {
+						return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+								.body(accountServiceImpl.inviteRoom(param), ChatMessageDTO.RequestLeaveRoom.class);
+					});
+		default:
+			return ServerResponse.badRequest().build();
+			
+		}
+
+		
 	}
 	
 	public Mono<ServerResponse> creatMessage(ServerRequest request) {

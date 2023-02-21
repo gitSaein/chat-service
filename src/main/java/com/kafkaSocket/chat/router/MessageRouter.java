@@ -59,17 +59,42 @@ public class MessageRouter {
 													implementation = ChatMessageDTO.RequestCreateRoom.class))))),
 			
 			@RouterOperation(
-					path = "/chat/v1/room/leave", 
+					path = "/chat/v1/room/out", 
 					method = RequestMethod.PUT, 
 					beanClass = MessageHandler.class, 
-					beanMethod = "leaveRoom",
+					beanMethod = "updateRoom",
 					operation = @Operation(
-							summary = "채팅방 나가",
-							operationId = "leaveRoom",
+							summary = "채팅방 나가기 ",
+							operationId = "updateRoom",
 							requestBody = @RequestBody(
 									content = @Content(
 											schema = @Schema(
 													implementation = ChatMessageDTO.RequestLeaveRoom.class))))),
+			@RouterOperation(
+					path = "/chat/v1/room/in", 
+					method = RequestMethod.PUT, 
+					beanClass = MessageHandler.class, 
+					beanMethod = "updateRoom",
+					operation = @Operation(
+							summary = "채팅방 입장 ",
+							operationId = "updateRoom",
+							requestBody = @RequestBody(
+									content = @Content(
+											schema = @Schema(
+													implementation = ChatMessageDTO.RequestParticipatedInRoom.class))))),
+			@RouterOperation(
+					path = "/chat/v1/room/invite", 
+					method = RequestMethod.PUT, 
+					beanClass = MessageHandler.class, 
+					beanMethod = "updateRoom",
+					operation = @Operation(
+							summary = "채팅방 초대 ",
+							operationId = "updateRoom",
+							requestBody = @RequestBody(
+									content = @Content(
+											schema = @Schema(
+													implementation = ChatMessageDTO.RequestInviteRoom.class))))),
+			
 			@RouterOperation(
 					path = "/chat/v1/message/room/{roomIdx}", 
 					method = RequestMethod.GET, 
@@ -87,7 +112,7 @@ public class MessageRouter {
 	public RouterFunction<ServerResponse> routes(MessageHandler postHandler){
 		return route().path("/chat/v1", builder -> builder
 					.POST("/room", postHandler::createRoom)
-					.PUT("/room/leave", postHandler::leaveRoom)
+					.PUT("/room/{messageType}", postHandler::updateRoom)
 					.POST("/message", postHandler::creatMessage)
 					.GET("/message/room/{roomIdx}", postHandler::getMessage)					
 				).build();
