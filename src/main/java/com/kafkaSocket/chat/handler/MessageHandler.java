@@ -55,7 +55,7 @@ public class MessageHandler {
 								.body(accountServiceImpl.inviteRoom(param), ChatMessageDTO.RequestLeaveRoom.class);
 					});
 		default:
-			return ServerResponse.badRequest().build();
+			return ServerResponse.notFound().build();
 			
 		}
 
