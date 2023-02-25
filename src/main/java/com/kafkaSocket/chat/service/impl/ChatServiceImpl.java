@@ -41,7 +41,7 @@ public class ChatServiceImpl implements KafkaConsumerService<ChatMessageEntity>,
 	}
     
     public Mono<ServerResponse> getChatMessageByTopic(ServerRequest serverRequest){
-		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("roomIdx"));
+		Integer roomIdx = Integer.parseInt(serverRequest.pathVariable("idx"));
 
 		return ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM)
 				.body(sinkService.asFlux(roomIdx.toString()), ChatMessageDTO.RequestMessage.class).log();

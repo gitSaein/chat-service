@@ -96,16 +96,28 @@ public class MessageRouter {
 													implementation = ChatMessageDTO.RequestInviteRoom.class))))),
 			
 			@RouterOperation(
-					path = "/chat/v1/message/room/{roomIdx}", 
+					path = "/chat/v1/message/room/{idx}", 
 					method = RequestMethod.GET, 
 					produces = MediaType.TEXT_EVENT_STREAM_VALUE,
 					beanClass = MessageHandler.class, 
-					beanMethod = "getMessage",
+					beanMethod = "getRoomMessage",
 					operation = @Operation(
 							summary = "채팅방 메시지 수신 ",
-							operationId = "getMessage",
+							operationId = "getRoomMessage",
 							parameters = {
-									@Parameter(in = ParameterIn.PATH, name="roomIdx", description="")
+									@Parameter(in = ParameterIn.PATH, name="idx", description="")
+							})),
+			@RouterOperation(
+					path = "/chat/v1/message/account/{idx}", 
+					method = RequestMethod.GET, 
+					produces = MediaType.TEXT_EVENT_STREAM_VALUE,
+					beanClass = MessageHandler.class, 
+					beanMethod = "getAccountMessage",
+					operation = @Operation(
+							summary = "계정 메시지 수신 ",
+							operationId = "getAccountMessage",
+							parameters = {
+									@Parameter(in = ParameterIn.PATH, name="idx", description="")
 							})),
 	})	
 	@Bean
@@ -114,7 +126,9 @@ public class MessageRouter {
 					.POST("/room", postHandler::createRoom)
 					.PUT("/room/{messageType}", postHandler::updateRoom)
 					.POST("/message", postHandler::creatMessage)
-					.GET("/message/room/{roomIdx}", postHandler::getMessage)					
+					.GET("/message/room/{idx}", postHandler::getRoomMessage)	
+					.GET("/message/account/{idx}", postHandler::getAccountMessage)					
+
 				).build();
 	}
 }

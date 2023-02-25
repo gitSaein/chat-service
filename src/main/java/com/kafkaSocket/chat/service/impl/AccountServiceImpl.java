@@ -13,11 +13,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.kafkaSocket.chat.dto.ChatMessageDTO;
 import com.kafkaSocket.chat.entity.AccountMessageEntity;
-import com.kafkaSocket.chat.entity.ChatMessageEntity;
 import com.kafkaSocket.chat.entity.ChatRoomsEntity;
 import com.kafkaSocket.chat.enums.MessageType;
 import com.kafkaSocket.chat.repository.AccountMessageRepository;
-import com.kafkaSocket.chat.repository.ChatMessageRepository;
 import com.kafkaSocket.chat.repository.ChatRoomsRepository;
 import com.kafkaSocket.chat.service.KafkaConsumerService;
 import com.kafkaSocket.chat.service.KafkaProduceService;
@@ -32,7 +30,6 @@ import reactor.core.publisher.Mono;
 public class AccountServiceImpl implements KafkaConsumerService<AccountMessageEntity>, KafkaProduceService<AccountMessageEntity>{
 
 	private final SinkServiceImpl<AccountMessageEntity> sinkService;
-	private final ChatMessageRepository chatMessageRepository;
 	private final AccountMessageRepository accountMessageRepository;
 	private final ChatRoomsRepository chatRoomsRepository;
 	private final static String ACCOUNT_TOPIC = "account.";
@@ -46,7 +43,7 @@ public class AccountServiceImpl implements KafkaConsumerService<AccountMessageEn
 	}
     
     public Mono<ServerResponse> getMessageByTopic(ServerRequest serverRequest){
-		Integer userIdx = Integer.parseInt(serverRequest.pathVariable("userIdx"));
+		Integer userIdx = Integer.parseInt(serverRequest.pathVariable("idx"));
 
 		return ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM)
 				.body(sinkService.asFlux(userIdx.toString()), ChatMessageDTO.RequestMessage.class).log();

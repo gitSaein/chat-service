@@ -73,8 +73,13 @@ public class MessageHandler {
 				.body(messageSendMono, ChatMessageEntity.class));
 	}
 	
-	public Mono<ServerResponse> getMessage(ServerRequest serverRequest){
+	public Mono<ServerResponse> getRoomMessage(ServerRequest serverRequest){
 		return chatServiceImpl.getChatMessageByTopic(serverRequest);
+
+	}
+	
+	public Mono<ServerResponse> getAccountMessage(ServerRequest serverRequest){
+		return accountServiceImpl.getMessageByTopic(serverRequest);
 
 	}
 
