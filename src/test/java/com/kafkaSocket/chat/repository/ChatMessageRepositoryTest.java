@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.kafkaSocket.chat.entity.ChatMessageEntity;
 import com.kafkaSocket.chat.enums.MessageType;
-import com.kafkaSocket.chat.message.ChatMessageEntity;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -40,7 +40,7 @@ class ChatMessageRepositoryTest {
 	@DisplayName("save message on mongoDB")
 	@ParameterizedTest
     @MethodSource("sendMessage")
-	void test(Integer roomIdx, Integer userIdx, String message, MessageType messageType) {
+	void test(Long roomIdx, Long userIdx, String message, MessageType messageType) {
 		//given
 		ChatMessageEntity chatMessage = ChatMessageEntity.builder()
 		.roomIdx(roomIdx)

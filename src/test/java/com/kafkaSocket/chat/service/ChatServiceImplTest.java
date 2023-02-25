@@ -5,8 +5,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import com.kafkaSocket.chat.dto.ChatMessageDTO;
 import com.kafkaSocket.chat.enums.MessageType;
-import com.kafkaSocket.chat.message.ChatMessageDTO;
 import com.kafkaSocket.chat.repository.ChatMessageRepository;
 import com.kafkaSocket.chat.service.impl.ChatServiceImpl;
 
@@ -31,12 +31,11 @@ public class ChatServiceImplTest {
 		ChatMessageDTO.RequestMessage messageParam = ChatMessageDTO.RequestMessage
 				.builder()
 				.message("hihi")
-				.messageType(MessageType.CHAT_MESSAGE)
-				.roomIdx(3)
-				.userIdx(1).build();
+				.roomIdx(3L)
+				.userIdx(1L).build();
 		
 		//when
-		Mono<String> senderResponse = chatServiceImpl.send(messageParam);
+		Mono<String> senderResponse = chatServiceImpl.send(messageParam.toEntity());
 		
 		//then
 		senderResponse.subscribe(System.out::println);
