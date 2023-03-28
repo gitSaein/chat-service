@@ -1,5 +1,5 @@
 server:
-  port: 9091
+  port: 8030
 spring:
   autoconfigure:
     exclude:
